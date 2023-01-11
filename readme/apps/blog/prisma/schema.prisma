@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -12,15 +13,18 @@ datasource db {
 
 model Post {
  id             Int @id @default(autoincrement())
- type           String
- title          String
- announceText   String
- text           String
+ type           Type @default(TEXT)
  createdAt      DateTime @default(now())
  publishAt      DateTime @default(now())
  userId         String
- tag            Tag[]
+ tags           Tag[]
  comments       Comment[]
+ title          String?
+ announceText   String?
+ text           String?
+ quoteAuthor    String?
+ link           String?
+ photo          Bytes?
 }
 
 model Tag {
@@ -36,4 +40,12 @@ model Comment {
   userId      String
   post        Post @relation(fields: [postId], references: [id])
   postId      Int
+}
+
+enum Type {
+  TEXT
+  VIDEO
+  QUOTE
+  PHOTO
+  LINK
 }

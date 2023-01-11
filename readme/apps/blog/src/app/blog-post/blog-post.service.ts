@@ -1,10 +1,11 @@
-import {BlogPostRepository} from './blog-post.repository';
-import {CreatePostDto} from './dto/create-post.dto';
-import {Post} from '@readme/shared-types';
-import {BlogPostEntity} from './blog-post.entity';
-import {UpdatePostDto} from './dto/update-post.dto';
-import {Injectable} from '@nestjs/common';
-import {BlogTagRepository} from '../blog-tag/blog-tag.repository';
+import { BlogPostRepository } from './blog-post.repository';
+import { CreatePostDto } from './dto/create-post.dto';
+import { Post } from '@readme/shared-types';
+import { BlogPostEntity } from './blog-post.entity';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { Injectable } from '@nestjs/common';
+import { BlogTagRepository } from '../blog-tag/blog-tag.repository';
+import { PostQuery } from './query/post.query';
 
 @Injectable()
 export class BlogPostService {
@@ -27,8 +28,8 @@ export class BlogPostService {
     return this.blogPostRepository.findById(id);
   }
 
-  async getPosts(): Promise<Post[]> {
-    return this.blogPostRepository.find();
+  async getPosts(query: PostQuery): Promise<Post[]> {
+    return this.blogPostRepository.find(query)
   }
 
   async updatePost(id: number, dto: UpdatePostDto): Promise<Post> {

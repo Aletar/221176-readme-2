@@ -4,14 +4,17 @@ import { Entity } from '@readme/core';
 export class BlogPostEntity implements Entity<BlogPostEntity>, Post {
   public id: number;
   public type: string;
+  public createdAt: Date;
+  public publishAt: Date;
+  public userId: string;
+  public tags: Tag[];
+  public comments: Comment[];
   public title: string;
   public announceText: string;
   public text: string;
-  public publishAt: Date;
-  public userId: string;
-  public comments: Comment[];
-  public tags: Tag[];
-  public createdAt: Date;
+  public quoteAuthor: string;
+  public link: string;
+  public photo: BinaryData;
 
   constructor(post: Post) {
     this.fillEntity(post);
@@ -19,20 +22,23 @@ export class BlogPostEntity implements Entity<BlogPostEntity>, Post {
 
   public fillEntity(entity: Post): void {
     this.type = entity.type;
+    this.createdAt = new Date();
+    this.publishAt = new Date();
+    this.userId = entity.userId;
+    this.tags = [...entity.tags];
+    this.comments = [];
     this.title = entity.title;
     this.announceText = entity.announceText;
     this.text = entity.text;
-    this.publishAt = new Date();
-    this.userId = entity.userId;
-    this.comments = [];
-    this.tags = [...entity.tags];
-    this.createdAt = new Date();
+    this.quoteAuthor = entity.quoteAuthor;
+    this.link = entity.link;
+    this.photo = entity.photo;
   }
 
   public toObject(): BlogPostEntity {
     return {
       ...this,
-      categories: this.tags.map(({id}) => ({ id })),
+      tags: this.tags.map(({id}) => ({ id })),
       comments: this.comments.map(({id}) => ({id}))
     };
   }
