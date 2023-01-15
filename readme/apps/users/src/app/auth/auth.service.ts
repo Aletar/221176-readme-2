@@ -1,19 +1,21 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from '@readme/shared-types';
+import { CommandEvent, User } from '@readme/shared-types';
 import { BlogUserEntity } from '../blog-user/blog-user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { AUTH_USER_EXISTS, AUTH_USER_PASSWORD_WRONG, AUTH_USER_NOT_FOUND } from './auth.constant';
+import { AUTH_USER_EXISTS, AUTH_USER_PASSWORD_WRONG, AUTH_USER_NOT_FOUND, RABBITMQ_SERVICE } from './auth.constant';
 import { ConfigType } from '@nestjs/config';
 import databaseConfig from '../../config/database.config';
 import { BlogUserRepository } from '../blog-user/blog-user.repository';
 import { JwtService } from '@nestjs/jwt';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly blogUserRepository: BlogUserRepository,
     private readonly jwtService: JwtService,
+    @Inject(RABBITMQ_SERVICE) private readonly rabbitClient: ClientProxy,
 
     @Inject(databaseConfig.KEY)
     private readonly mongoConfig: ConfigType<typeof databaseConfig>
@@ -37,7 +39,18 @@ export class AuthService {
 
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
 
-    return this.blogUserRepository.create(userEntity);
+    const createdUser = await this.blogUserRepository.create(userEntity);
+
+    this.rabbitClient.emit(
+      { cmd: CommandEvent.AddSubscriber },
+      {
+        email: createdUser.email,
+        name: createdUser.name,
+        userId: createdUser._id.toString(),
+      }
+    );
+
+    return createdUser;
 
   }
 
