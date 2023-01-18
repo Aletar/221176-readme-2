@@ -48,7 +48,7 @@ export class BlogPostRepository implements CRUDRepository<BlogPostEntity, number
     });
   }
 
-  public find({limit, categories, sortDirection, page}: PostQuery): Promise<Post[]> {
+  public find({limit, tags, sortDirection, page}: PostQuery): Promise<Post[]> {
     return this.prisma.post.findMany({
       where: {
         tags: {

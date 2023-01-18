@@ -9,13 +9,13 @@ export class BlogTagRepository implements CRUDRepository<BlogTagEntity, number, 
   constructor(private readonly prisma: PrismaService) {}
 
   public async create(item: BlogTagEntity): Promise<Tag> {
-    return this.prisma.category.create({
+    return this.prisma.tags.create({
       data: { ...item.toObject() }
     });
   }
 
   public async destroy(id: number): Promise<void> {
-    await this.prisma.category.delete({
+    await this.prisma.tags.delete({
       where: {
        id,
       }
@@ -23,7 +23,7 @@ export class BlogTagRepository implements CRUDRepository<BlogTagEntity, number, 
   }
 
   public findById(id: number): Promise<Tag | null> {
-    return this.prisma.category.findFirst({
+    return this.prisma.tags.findFirst({
       where: {
         id
       }
@@ -31,7 +31,7 @@ export class BlogTagRepository implements CRUDRepository<BlogTagEntity, number, 
   }
 
   public find(ids: number[] = []): Promise<Tag[]> {
-    return this.prisma.category.findMany({
+    return this.prisma.tags.findMany({
       where: {
         id: {
           in: ids.length > 0 ? ids : undefined
@@ -41,7 +41,7 @@ export class BlogTagRepository implements CRUDRepository<BlogTagEntity, number, 
   }
 
   public update(id: number, item: BlogTagEntity): Promise<Tag> {
-    return this.prisma.category.update({
+    return this.prisma.tags.update({
       where: {
         id
       },

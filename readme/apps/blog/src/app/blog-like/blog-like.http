@@ -1,0 +1,28 @@
+###
+# Get like by ID
+GET http://localhost:3334/api/likes/1 HTTP/1.1
+
+###
+
+# Get list of likes
+GET http://localhost:3334/api/likes?postId=2&ids=2 HTTP/1.1
+Content-Type: application/json
+
+###
+
+# Create a new like
+POST http://localhost:3334/api/likes HTTP/1.1
+Content-Type: application/json
+
+{
+  "postId": 3,
+  "userId": "60f021d6123456789977a490"
+}
+
+###
+
+# Delete a like
+DELETE http://localhost:3334/api/likes/2/60f021d6123456789977a490 HTTP/1.1
+
+###
+

@@ -1,0 +1,29 @@
+###
+# Get comment by ID
+GET http://localhost:3334/api/comments/4 HTTP/1.1
+
+###
+
+# Get list of comments
+GET http://localhost:3334/api/comments?postId=5 HTTP/1.1
+Content-Type: application/json
+
+###
+
+# Create a new comment
+POST http://localhost:3334/api/comments HTTP/1.1
+Content-Type: application/json
+
+{
+  "postId": 3,
+  "text": "something",
+  "userId": "60f021d6123456789977a490"
+}
+
+###
+
+# Delete a comment
+DELETE http://localhost:3334/api/comments/4/60f021d6123456789977a490 HTTP/1.1
+
+###
+

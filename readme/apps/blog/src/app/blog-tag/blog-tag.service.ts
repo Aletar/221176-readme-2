@@ -12,8 +12,8 @@ export class BlogTagService {
   ) {}
 
   async createTag(dto: CreateTagDto): Promise<Tag> {
-    const categoryEntity = new BlogTagEntity(dto);
-    return this.blogTagRepository.create(categoryEntity);
+    const tagEntity = new BlogTagEntity(dto);
+    return this.blogTagRepository.create(tagEntity);
   }
 
   async deleteTag(id: number): Promise<void> {

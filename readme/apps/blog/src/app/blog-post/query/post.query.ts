@@ -11,7 +11,7 @@ export class PostQuery {
   @Transform(({ value }) => value.split(',').map((tagId) => +tagId))
   @IsArray({})
   @IsOptional()
-  public categories?: number[];
+  public tags?: number[];
 
   @IsIn(['asc', 'desc'])
   @IsOptional()

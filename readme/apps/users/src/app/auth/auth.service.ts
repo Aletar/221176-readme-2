@@ -3,6 +3,7 @@ import { CommandEvent, User } from '@readme/shared-types';
 import { BlogUserEntity } from '../blog-user/blog-user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { ChangeUserPasswordDto } from './dto/change-user-password.dto';
 import { AUTH_USER_EXISTS, AUTH_USER_PASSWORD_WRONG, AUTH_USER_NOT_FOUND, RABBITMQ_SERVICE } from './auth.constant';
 import { ConfigType } from '@nestjs/config';
 import databaseConfig from '../../config/database.config';
@@ -24,7 +25,6 @@ export class AuthService {
   async register(dto: CreateUserDto) {
     const { email, name, password } = dto;
     const blogUser: User = {
-      _id: '',
       email,
       name,
       avatar: '',
@@ -86,4 +86,30 @@ export class AuthService {
     };
   }
 
+  async changePassword(dto: ChangeUserPasswordDto) {
+    const {email, password, newPassword} = dto;
+    const existUser = await this.blogUserRepository.findByEmail(email);
+
+    if (!existUser) {
+      throw new UnauthorizedException(AUTH_USER_NOT_FOUND);
+    }
+
+    const blogUserEntity = new BlogUserEntity(existUser);
+    if (! await blogUserEntity.comparePassword(password)) {
+      throw new UnauthorizedException(AUTH_USER_PASSWORD_WRONG);
+    }
+
+    await blogUserEntity.setPassword(newPassword);
+
+    return await this.blogUserRepository.update(blogUserEntity._id, blogUserEntity);
+  }
+
+  async updateById(userId: string, dto: User) {
+    const blogUserEntity = new BlogUserEntity(dto);
+    return await this.blogUserRepository.update(userId, blogUserEntity);
+  }
+
+  async getUserByEmail(email: string) {
+    return await this.blogUserRepository.findByEmail(email);
+  }
 }
