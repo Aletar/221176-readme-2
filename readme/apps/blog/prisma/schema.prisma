@@ -17,14 +17,16 @@ model Post {
  createdAt      DateTime @default(now())
  publishAt      DateTime @default(now())
  userId         String
- tags           Tag[]
- comments       Comment[]
  title          String?
  announceText   String?
  text           String?
  quoteAuthor    String?
  link           String?
- photo          Bytes?
+ originalId     Int?
+ published      Boolean @default(false)
+ tags           Tag[]
+ comments       Comment[]
+ likes          Likes[]
 }
 
 model Tag {
@@ -33,10 +35,36 @@ model Tag {
   posts        Post[]
 }
 
+model TagsOnPosts {
+  post         Post @relation(fields: [postId], references: [id])
+  postId       Int
+  tag          Category @relation(fields: [tagId], references: [id])
+  tagId        Int
+  assignedAt   DateTime @default(now())
+  assignedBy   String
+
+  @@id([postId, categoryId])
+}
+
 model Comment {
   id          Int @id @default(autoincrement())
   createdAt   DateTime @default(now())
   text        String
+  userId      String
+  post        Post @relation(fields: [postId], references: [id])
+  postId      Int
+}
+
+model Subscribe {
+  id          Int @id @default(autoincrement())
+  author      String @default("")
+  userId      String @default("")
+  createdAt   DateTime @default(now())
+}
+
+model Like {
+  id          Int @id @default(autoincrement())
+  createdAt   DateTime @default(now())
   userId      String
   post        Post @relation(fields: [postId], references: [id])
   postId      Int

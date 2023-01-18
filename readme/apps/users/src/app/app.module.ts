@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { getMongoDbConfig } from '../config/mongodb.config';
 import { jwtOptions } from '../config/jwt.config';
 import { rabbitMqOptions } from '../config/rabbitmq.config';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -22,6 +23,9 @@ import { rabbitMqOptions } from '../config/rabbitmq.config';
     MongooseModule.forRootAsync(
       getMongoDbConfig()
     ),
+    MulterModule.register({
+      dest: './upload',
+    }),
     AuthModule,
     BlogUserModule],
   controllers: [],
