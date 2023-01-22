@@ -4,7 +4,7 @@ import { BlogUserEntity } from '../blog-user/blog-user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ChangeUserPasswordDto } from './dto/change-user-password.dto';
-import { AUTH_USER_EXISTS, AUTH_USER_PASSWORD_WRONG, AUTH_USER_NOT_FOUND, RABBITMQ_SERVICE } from './auth.constant';
+import { Message, RABBITMQ_SERVICE } from './auth.constant';
 import { ConfigType } from '@nestjs/config';
 import databaseConfig from '../../config/database.config';
 import { BlogUserRepository } from '../blog-user/blog-user.repository';
@@ -34,7 +34,7 @@ export class AuthService {
     const existUser = await this.blogUserRepository.findByEmail(email);
 
     if (existUser) {
-      throw new Error(AUTH_USER_EXISTS);
+      throw new Error(Message.UserExist);
     }
 
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
@@ -59,12 +59,12 @@ export class AuthService {
     const existUser = await this.blogUserRepository.findByEmail(email);
 
     if (!existUser) {
-      throw new UnauthorizedException(AUTH_USER_NOT_FOUND);
+      throw new UnauthorizedException(Message.UserNotFound);
     }
 
     const blogUserEntity = new BlogUserEntity(existUser);
     if (! await blogUserEntity.comparePassword(password)) {
-      throw new UnauthorizedException(AUTH_USER_PASSWORD_WRONG);
+      throw new UnauthorizedException(Message.UserPasswordWrong);
     }
 
     return blogUserEntity.toObject();
@@ -91,12 +91,12 @@ export class AuthService {
     const existUser = await this.blogUserRepository.findByEmail(email);
 
     if (!existUser) {
-      throw new UnauthorizedException(AUTH_USER_NOT_FOUND);
+      throw new UnauthorizedException(Message.UserNotFound);
     }
 
     const blogUserEntity = new BlogUserEntity(existUser);
     if (! await blogUserEntity.comparePassword(password)) {
-      throw new UnauthorizedException(AUTH_USER_PASSWORD_WRONG);
+      throw new UnauthorizedException(Message.UserPasswordWrong);
     }
 
     await blogUserEntity.setPassword(newPassword);

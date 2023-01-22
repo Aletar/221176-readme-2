@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { BlogCommentEntity } from './blog-comment.entity';
 import { BlogCommentRepository } from './blog-comment.repository';
 import { CreateBlogCommentDto } from './dto/blog-comment-create.dto';
 import { Comment } from '@readme/shared-types';
 import { BlogCommentQuery } from './query/blog-comment.query';
 import { BlogPostRepository } from '../blog-post/blog-post.repository';
-import { POST_NOT_EXIST, POST_NOT_PUBLISHED, COMMENT_NOT_EXIST, OTHER_OWNER } from './blog-comment.constant';
+import { Message } from './blog-comment.constant';
 
 @Injectable()
 export class BlogCommentService {
@@ -26,10 +26,10 @@ export class BlogCommentService {
     const postId = +dto.postId;
     const post = await this.blogPostRepository.findById(postId);
     if (!post) {
-      throw new HttpException(POST_NOT_EXIST, HttpStatus.FORBIDDEN);
+      throw new NotFoundException(Message.PostNotExists);
     }
     if (!post.published) {
-      throw new HttpException(POST_NOT_PUBLISHED, HttpStatus.FORBIDDEN);
+      throw new BadRequestException(Message.PostNotPublished);
     }
     const blogCommentEntity = new BlogCommentEntity(dto);
     return await this.blogCommentRepository.create(blogCommentEntity);
@@ -38,10 +38,10 @@ export class BlogCommentService {
   async deleteComment(id: number, userId: string  ) {
     const comment = await this.blogCommentRepository.findById(id);
     if (!comment) {
-      throw new HttpException(COMMENT_NOT_EXIST, HttpStatus.FORBIDDEN);
+      throw new NotFoundException(Message.CommentNotExist)
     }
     if (comment.userId !== userId) {
-      throw new HttpException(OTHER_OWNER, HttpStatus.FORBIDDEN);
+      throw new BadRequestException(Message.OtherOwner);
     }
     return await this.blogCommentRepository.destroy(comment.id);
   }

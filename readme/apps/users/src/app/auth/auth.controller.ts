@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Get, Patch, UploadedFile, Param, UseGuards, Req, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Get, Patch, UploadedFile, Param, UseGuards, Res, UseInterceptors } from '@nestjs/common';
 import { fillObject } from '@readme/core';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -47,19 +47,6 @@ export class AuthController {
   async login(@Body() dto: LoginUserDto) {
     const user = await this.authService.verifyUser(dto);
     return this.authService.loginUser(user);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('')
-  @ApiResponse({
-    type: UserRdo,
-    status: HttpStatus.OK,
-    description: 'User found'
-  })
-  async validate(@Req() request: Request | any) {
-    const {user} = request;
-    const existUser = this.authService.getUserByEmail(user?.email);
-    return fillObject(UserRdo, existUser);
   }
 
   @UseGuards(JwtAuthGuard)
